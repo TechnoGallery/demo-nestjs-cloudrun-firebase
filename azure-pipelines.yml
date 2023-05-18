@@ -1,0 +1,31 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - script: |
+      curl -f https://get.pnpm.io/v6.js | node - add --global pnpm
+    displayName: 'Install PNPM'
+
+  - task: Cache@2
+    inputs:
+      key: 'pnpm-cache | "$(Agent.OS)" | package-lock.json'
+      path: '~/.pnpm-store'
+      cacheHitVar: 'CACHE_RESTORED'
+    displayName: 'Cache PNPM packages'
+
+  - script: |
+      if [ "$(CACHE_RESTORED)" != "true" ]; then
+        pnpm install
+      fi
+    displayName: 'PNPM Install'
+
+  - script: |
+      pnpm run test
+    displayName: 'PNPM Test'
+
+  - script: |
+      pnpm run build
+    displayName: 'PNPM Build'
