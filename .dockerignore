@@ -22,7 +22,7 @@
 **/charts
 **/docker-compose*
 **/compose*
-**/Dockerfile*
+init.Dockerfile
 **/node_modules
 **/npm-debug.log
 **/obj
