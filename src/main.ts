@@ -24,4 +24,6 @@ function setupSwagger(app: INestApplication): void {
 
 const logger: Logger = new Logger('Main');
 
-bootstrap().then(() => logger.log('Application started'));
+bootstrap()
+  .then(() => logger.log('Application started'))
+  .catch((error) => logger.error(`Application failed to start: ${error}`));
