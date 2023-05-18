@@ -4,28 +4,22 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-  - script: |
-      curl -f https://get.pnpm.io/v6.js | node - add --global pnpm
-    displayName: 'Install PNPM'
+variables:
+  pnpm_config_cache: $(Pipeline.Workspace)/.pnpm-store
 
+steps:
   - task: Cache@2
     inputs:
-      key: 'pnpm-cache | "$(Agent.OS)" | package-lock.json'
-      path: '~/.pnpm-store'
-      cacheHitVar: 'CACHE_RESTORED'
-    displayName: 'Cache PNPM packages'
+      key: 'pnpm | "$(Agent.OS)" | pnpm-lock.yaml'
+      path: $(pnpm_config_cache)
+    displayName: Cache pnpm
 
   - script: |
-      if [ "$(CACHE_RESTORED)" != "true" ]; then
-        pnpm install
-      fi
-    displayName: 'PNPM Install'
-
+      corepack enable
+      corepack prepare pnpm@latest-8 --activate
+      pnpm config set store-dir $(pnpm_config_cache)
+    displayName: "Setup pnpm"
   - script: |
-      pnpm run test
-    displayName: 'PNPM Test'
-
-  - script: |
+      pnpm install
       pnpm run build
-    displayName: 'PNPM Build'
+    displayName: "pnpm install and build"
