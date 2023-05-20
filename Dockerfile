@@ -2,6 +2,8 @@ ARG WORKDIR=/app
 
 # Create a stage for installing production dependecies.
 FROM node:20-alpine as base
+
+ARG WORKDIR
 WORKDIR ${WORKDIR}
 
 RUN corepack enable
@@ -12,6 +14,8 @@ RUN pnpm install --prod --frozen-lockfile
 
 # Create a stage for building the application.
 FROM base as build
+
+ARG WORKDIR
 WORKDIR ${WORKDIR}
 
 RUN pnpm install --frozen-lockfile
@@ -22,6 +26,8 @@ RUN pnpm build
 
 # Create a new stage to run the application with minimal runtime dependencies
 FROM base as final
+
+ARG WORKDIR
 WORKDIR ${WORKDIR}
 
 COPY --from=build ${WORKDIR}/dist ./dist
