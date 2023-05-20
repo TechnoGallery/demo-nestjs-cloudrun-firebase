@@ -5,26 +5,23 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  pnpm_config_cache: $(Pipeline.Workspace)/.pnpm-store
+  pnpm_cache_directory: $(Pipeline.Workspace)/.pnpm-store
 
+steps:
+  - task: Cache@2
+    inputs:
+      key: pnpm | "$(Agent.OS)" | pnpm-lock.yaml
+      path: $(pnpm_cache_directory)
+    displayName: "Cache pnpm store"
 
-jobs:
-  - job: build
-    displayName: pnpm build
-    steps:
-      - task: Cache@2
-        inputs:
-          key: 'pnpm | "$(Agent.OS)" | pnpm-lock.yaml'
-          path: $(pnpm_config_cache)
-        displayName: Cache pnpm
+  - script: |
+      corepack enable
+      corepack prepare pnpm@latest-8 --activate
+      pnpm config set store-dir $(pnpm_cache_directory)
+    displayName: "pnpm setup"
 
-      - script: |
-          corepack enable
-          corepack prepare pnpm@latest-8 --activate
-          pnpm config set store-dir $(pnpm_config_cache)
-        displayName: "Setup pnpm"
+  - script: pnpm install
+    displayName: "pnpm install"
 
-      - script: |
-          pnpm install
-          pnpm run build
-        displayName: "pnpm install and build"
+  - script: pnpm build
+    displayName: "pnpm build"
