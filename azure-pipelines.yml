@@ -7,21 +7,38 @@ pool:
 variables:
   pnpm_cache_directory: $(Pipeline.Workspace)/.pnpm-store
 
-steps:
-  - task: Cache@2
-    inputs:
-      key: pnpm | "$(Agent.OS)" | pnpm-lock.yaml
-      path: $(pnpm_cache_directory)
-    displayName: "Cache pnpm store"
 
-  - script: |
-      corepack enable
-      corepack prepare pnpm@latest-8 --activate
-      pnpm config set store-dir $(pnpm_cache_directory)
-    displayName: "pnpm setup"
+stages:
+  - stage: build
+    displayName: "Build"
+    jobs:
+      - job: build
+        steps:
+          - task: Cache@2
+            inputs:
+              key: pnpm | "$(Agent.OS)" | pnpm-lock.yaml
+              path: $(pnpm_cache_directory)
+            displayName: "Cache pnpm store"
 
-  - script: pnpm install
-    displayName: "pnpm install"
+          - script: |
+              corepack enable
+              corepack prepare pnpm@latest-8 --activate
+              pnpm config set store-dir $(pnpm_cache_directory)
+            displayName: "pnpm setup"
 
-  - script: pnpm build
-    displayName: "pnpm build"
+          - script: pnpm install
+
+          - script: pnpm build
+
+  - stage: docker_build
+    displayName: "Docker build"
+    jobs:
+      - job: docker_build
+        steps:
+          - task: Docker@2
+            inputs:
+              command: build
+              tags: |
+                latest
+                $(Build.BuildId)
+            displayName: "Docker build"
