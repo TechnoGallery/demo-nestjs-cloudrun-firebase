@@ -30,10 +30,11 @@ stages:
 
           - script: pnpm build
 
-  - stage: docker_build
-    displayName: "Docker build"
+  - stage: docker
+    displayName: "Docker"
     jobs:
       - job: docker_build
+        displayName: "Build"
         steps:
           - task: Docker@2
             inputs:
