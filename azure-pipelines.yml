@@ -13,6 +13,7 @@ stages:
     displayName: "Build"
     jobs:
       - job: build
+        displayName: "Build"
         steps:
           - task: Cache@2
             inputs:
