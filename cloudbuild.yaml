@@ -13,4 +13,4 @@ steps:
     args: ['push', $_IMAGE_TAG ]
 
 substitutions:
-  _IMAGE_TAG: europe-west1-docker.pkg.dev/$PROJECT_ID/techno-gallery/$REPO_NAME:$COMMIT_SHA
+  _IMAGE_TAG: europe-west1-docker.pkg.dev/${PROJECT_ID}/techno-gallery/${REPO_NAME}:${COMMIT_SHA}
