@@ -15,6 +15,9 @@ steps:
     id: 'docker-push'
     args: ['push', $_IMAGE_TAG ]
 
+images:
+  - $_IMAGE_TAG
+
 substitutions:
   _SERVICE_NAME: $REPO_NAME
   _IMAGE_TAG: europe-west1-docker.pkg.dev/${PROJECT_ID}/techno-gallery/${_SERVICE_NAME}:${COMMIT_SHA}
