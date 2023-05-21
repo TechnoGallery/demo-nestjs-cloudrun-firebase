@@ -1,0 +1,8 @@
+steps:
+  - name: 'node:20-alpine'
+    args:
+      - |
+        corepack enable
+        corepack prepare pnpm@latest-8 --activate
+        pnpm install
+        pnpm build
