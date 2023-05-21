@@ -8,6 +8,7 @@ steps:
     args: [ 'push', '--all-tags', $_IMAGE ]
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
     id: 'gcloud-run-deploy'
     args: [ 'run', 'deploy', $_SERVICE_NAME, '--image', $_IMAGE_SHA, '--region', $_REGION, '--allow-unauthenticated', '--min-instances', '0', '--max-instances', '2',  '--memory', '512Mi', '--cpu', '1', '--timeout', '30s', '--concurrency', '80' ]
 
