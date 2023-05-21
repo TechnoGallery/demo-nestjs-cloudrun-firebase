@@ -1,15 +1,18 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     id: 'docker-build'
-    args: ['build', '-t', $_IMAGE_TAG , '.']
+    args: [ 'build', '-t', $_IMAGE_LATEST, '-t', $_IMAGE_SHA, '--cache-from', $_IMAGE_LATEST ,  '.' ]
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'docker-push'
-    args: ['push', $_IMAGE_TAG ]
+    args: [ 'push', '--all-tags', $_IMAGE ]
 
 images:
-  - $_IMAGE_TAG
+  - $_IMAGE_LATEST
+  - $_IMAGE_SHA
 
 substitutions:
   _SERVICE_NAME: $REPO_NAME
-  _IMAGE_TAG: europe-west1-docker.pkg.dev/${PROJECT_ID}/techno-gallery/${_SERVICE_NAME}:${COMMIT_SHA}
+  _IMAGE: europe-west1-docker.pkg.dev/${PROJECT_ID}/techno-gallery/${_SERVICE_NAME}
+  _IMAGE_LATEST: ${_IMAGE}:latest
+  _IMAGE_SHA: ${_IMAGE}:${SHORT_SHA}
