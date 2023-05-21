@@ -1,5 +1,6 @@
 steps:
   - name: 'node:20-alpine'
+    id: 'pnpm-build'
     script: |
       corepack enable
       corepack prepare pnpm@latest-8 --activate
@@ -7,10 +8,13 @@ steps:
       pnpm build
 
   - name: 'gcr.io/cloud-builders/docker'
+    id: 'docker-build'
     args: ['build', '-t', $_IMAGE_TAG , '.']
 
   - name: 'gcr.io/cloud-builders/docker'
+    id: 'docker-push'
     args: ['push', $_IMAGE_TAG ]
 
 substitutions:
-  _IMAGE_TAG: europe-west1-docker.pkg.dev/${PROJECT_ID}/techno-gallery/${REPO_NAME}:${COMMIT_SHA}
+  _SERVICE_NAME: $REPO_NAME
+  _IMAGE_TAG: europe-west1-docker.pkg.dev/${PROJECT_ID}/techno-gallery/${_SERVICE_NAME}:${COMMIT_SHA}
