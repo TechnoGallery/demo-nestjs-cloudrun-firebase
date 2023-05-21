@@ -1,5 +1,6 @@
 steps:
   - name: 'node:20-alpine'
+    entrypoint: 'bash'
     args:
       - |
         corepack enable
