@@ -1,12 +1,4 @@
 steps:
-  - name: 'node:20-alpine'
-    id: 'pnpm-build'
-    script: |
-      corepack enable
-      corepack prepare pnpm@latest-8 --activate
-      pnpm install
-      pnpm build
-
   - name: 'gcr.io/cloud-builders/docker'
     id: 'docker-build'
     args: ['build', '-t', $_IMAGE_TAG , '.']
