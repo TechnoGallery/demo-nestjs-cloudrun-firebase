@@ -7,12 +7,17 @@ steps:
     id: 'docker-push'
     args: [ 'push', '--all-tags', $_IMAGE ]
 
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'gcloud-run-deploy'
+    args: [ 'run', 'deploy', $_SERVICE_NAME, '--image', $_IMAGE_SHA, '--region', $_REGION, '--allow-unauthenticated', '--min-instances', '0', '--max-instances', '2',  '--memory', '512Mi', '--cpu', '1', '--timeout', '30s', '--concurrency', '80' ]
+
 images:
   - $_IMAGE_LATEST
   - $_IMAGE_SHA
 
 substitutions:
   _SERVICE_NAME: $REPO_NAME
-  _IMAGE: europe-west1-docker.pkg.dev/${PROJECT_ID}/techno-gallery/${_SERVICE_NAME}
+  _REGION: europe-west1
+  _IMAGE: ${_REGION}-docker.pkg.dev/${PROJECT_ID}/techno-gallery/${_SERVICE_NAME}
   _IMAGE_LATEST: ${_IMAGE}:latest
   _IMAGE_SHA: ${_IMAGE}:${SHORT_SHA}
